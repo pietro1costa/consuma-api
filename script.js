@@ -1,45 +1,45 @@
-const container = document.getElementById('characters-container');
-const loading = document.getElementById('loading');
+const painel = document.getElementById('container-personagens');
+const avisoCarregando = document.getElementById('carregando');
 
-// Função para buscar os dados
-async function fetchCharacters() {
+async function carregarDados() {
     try {
-        const response = await fetch('https://rickandmortyapi.com/api/character');
+        const resposta = await fetch('https://rickandmortyapi.com/api/character');
         
-        if (!response.ok) throw new Error('Erro ao buscar dados');
+        if (!resposta.ok) {
+            throw new Error('Falha na requisição');
+        }
 
-        const data = await response.json();
-        renderCards(data.results);
-    } catch (error) {
-        loading.innerText = '❌ Erro ao carregar os dados. Tente novamente.';
-        console.error(error);
+        const dados = await resposta.json();
+        renderizarTela(dados.results);
+
+    } catch (erro) {
+        avisoCarregando.innerText = 'Não foi possível carregar os dados no momento.';
+        console.error(erro);
     }
 }
 
-// Função para desenhar os cards na tela
-function renderCards(characters) {
-    loading.style.display = 'none'; // Esconde o carregando
+function renderizarTela(listaPersonagens) {
+    avisoCarregando.style.display = 'none';
 
-    characters.forEach(char => {
-        const card = document.createElement('div');
-        card.classList.add('card');
+    listaPersonagens.forEach(personagem => {
+        const item = document.createElement('div');
+        item.classList.add('cartao');
 
-        card.innerHTML = `
-            <img src="${char.image}" alt="${char.name}">
-            <div class="card-info">
-                <h2>${char.name}</h2>
+        item.innerHTML = `
+            <img src="${personagem.image}" alt="${personagem.name}">
+            <div class="info-cartao">
+                <h2>${personagem.name}</h2>
                 <div class="status">
-                    <span class="status-icon ${char.status}"></span>
-                    <span>${char.status} - ${char.species}</span>
+                    <span class="icone-status ${personagem.status}"></span>
+                    <span>${personagem.status} - ${personagem.species}</span>
                 </div>
-                <p style="font-size: 0.8rem; color: #9e9e9e; margin-top: 5px;">Última localização:</p>
-                <p style="font-size: 0.9rem;">${char.location.name}</p>
+                <p class="subtitulo">Última localização:</p>
+                <p class="local">${personagem.location.name}</p>
             </div>
         `;
 
-        container.appendChild(card);
+        painel.appendChild(item);
     });
 }
 
-// Inicia a aplicação
-fetchCharacters();
+carregarDados();
